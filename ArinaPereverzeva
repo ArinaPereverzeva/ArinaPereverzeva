@@ -1,0 +1,209 @@
+#main.py
+import Otpravlenie
+import PostOffice
+import MainPostOffice
+import Tkinter
+
+#Создание почтовых отделений в разных районах города
+post_office1 = PostOffice(1, "Пушкина 97")
+post_office2 = PostOffice(2, "Ленина 21")
+post_office3 = PostOffice(3, "Красноармейский 77а")
+
+otpravlenie1 = Otpravlenie(1, "Павловский тракт 57")
+otpravlenie2 = Otpravlenie(2, "Интернациональная 25")
+otpravlenie3 = Otpravlenie(3, "Кубанская 288а")
+otpravlenie4 = Otpravlenie(4, "Пролетарская 77в")
+otpravlenie5 = Otpravlenie(5, "Комунаров проспект 12")
+otpravlenie6 = Otpravlenie(6, "Юрина 26а")
+
+#Создание главпачтамта
+main_post_office = MainPostOffice()
+
+#Работа почтовых отделений
+post_offices = []
+post_offices.append(post_office1)
+post_offices.append(post_office2)
+post_offices.append(post_office3)
+
+#Pochta.py
+class Pochta:
+
+    def __int__(self, number, address):
+        self.number = number
+        self.address = address
+
+    def getNumber(self):
+        return self.number
+
+    def getAddress(self):
+        return self.address
+
+#Otpravlenie.py
+class Otpravlenie:
+
+    def __init__(self):
+        self.address = address
+        self.number = number
+
+    def getAddress(self):
+        return self.address
+
+    def getNumber(self):
+        return self.number
+
+
+#PostOffice.py
+import Otpravlenie
+import Pochta
+import MainPostOffice
+import Tkinter
+import math
+import random
+class PostOffice(Pochta.Pochta):  # Почтовое отделение
+    def __init__(self, number, address):
+        super().__init__(number, address)
+        self.mailbox = []  # почтовый ящик
+        self.outgoing_mail = []  # исходящие отправления
+        self.incoming_mail = []  # входящие отправления
+        self.special_department = MainPostOffice()
+    def collect_mail(self):  # сбор отправлений
+        editor.insert("1.0", f"Сбор отправлений из почтовых ящиков {self.address} \n")  # ввод в окно tkinter
+        self.mailbox = [f"Отправление {id}" for id in range(1,6)]
+    def handle_mail(self):  # обработка отправлений
+        for item in self.mailbox:
+            recipient = random.choice(["местное", "другой район", "другой город"])
+            if recipient == "местное":
+                editor.insert("1.0", f"Доставлено отправление {item} на местный адрес \n")  # ввод в окно tkinter
+            elif recipient == "другой район":
+                editor.insert("1.0", f"Перессылка отправления {item} в другой район \n")  # ввод в окно tkinter
+                self.outgoing_mail.append(item)
+            else:
+                editor.insert("1.0", f"Пересылка отправления {item} в главпочтамт для доставки за пределы города \n")  # ввод в окно tkinter
+                main_post_office.handle_outgoing_mail(item)
+    def receive_mail(self, mail):  # получение отправления
+        editor.insert("1.0", f"Получение отправления {mail} в {self.address} \n")  # ввод в окно tkinter
+        self.incoming_mail.append(mail)  # входящие отправления
+        TABLE = []
+        TABLE.append((f'Отделение {self.number}', f'ул. {self.address}', f'{len(self.incoming_mail) + len(self.outgoing_mail)}', f'{len(self.incoming_mail)}', f'{len(self.outgoing_mail)}', f'{math.ceil((self.special_department.handle_outgoing_mail(mail) / (len(self.incoming_mail) + len(self.outgoing_mail))) * 100)} %'))
+        for pochta in TABLE:
+            table.insert(parent='', index='end', values=pochta)
+            table.pack(padx=20, pady=20)
+    def send_mail_to_recipient(self):  # отправка отправления получателю
+        for item in self.outgoing_mail:  # исходящие отправления
+            editor.insert("1.0", f"Отправление {item} отправлено получателю \n")  # ввод в окно tkinter
+    def forward_mail_to_other_district(self, mail):  # пересылка отправления в другой район
+        editor.insert("1.0", f"Отправление {mail} перенаправлено в другой район \n")  # ввод в окно tkinter
+
+
+
+
+#Tkinter.ru
+import Otpravlenie
+import Pochta
+import main
+import PostOffice
+import MainPostOffice
+
+import time
+
+import tkinter as tk
+from tkinter import ttk
+
+# создаем отдельное окно с информацией о почтовых отделениях (вывод не в консоли)
+root = tk.Tk()
+root.title("Почтовая система города")
+root.geometry("900x550")
+
+
+editor = tk.Text()
+editor.pack(fill="both", expand=1)
+
+# Создание таблицы с параметрами объектов
+table = ttk.Treeview(root)
+
+table['columns'] = ('Отделение', 'Адрес', 'Отправления', 'Входящие', 'Исходящие', 'Неправильные')
+table.heading("#0", text='Просмотр параметров объектов')
+table.heading('Отделение', text='Отделение')
+table.heading('Адрес', text='Адрес')
+table.heading('Отправления', text='Отправления')
+table.heading('Входящие', text='Входящие')
+table.heading('Исходящие', text='Исходящие')
+table.heading('Неправильные', text='Неправильные')
+
+table.column("#0", width=0, stretch=tk.NO)
+
+table.column('Отделение', anchor=tk.CENTER, width=150)
+table.column('Адрес', anchor=tk.CENTER, width=150)
+table.column('Отправления', anchor=tk.CENTER, width=100)
+table.column('Входящие', anchor=tk.CENTER, width=100)
+table.column('Исходящие', anchor=tk.CENTER, width=100)
+table.column('Неправильные', anchor=tk.CENTER, width=150)
+
+
+
+def infinite_loop():
+    for i in range(1, 6):
+        for office in post_offices:
+            office.collect_mail()
+            office.handle_mail()
+            office.send_mail_to_recipient()
+        main_post_office.handle_outgoing_mail(f"Отправление{i}")
+
+    time.sleep(2)  # Задержка между перераспределениями почты
+
+    main_post_office.send_special_mail_back()
+
+
+# Функция для запуска бесконечного цикла
+def start_loop():
+    global running
+    running = True
+    while running:
+        infinite_loop()
+        root.update()
+
+
+# Функция для остановки бесконечного цикла
+def stop_loop():
+    global running
+    running = False
+
+
+root = tk.Tk()
+root.title("Управление циклом")
+
+# Кнопка "Start" для запуска цикла
+start_button = tk.Button(root, text="Start", command=start_loop)
+start_button.pack()
+
+# Кнопка "Stop" для остановки цикла
+stop_button = tk.Button(root, text="Stop", command=stop_loop)
+stop_button.pack()
+
+running = False
+
+root.mainloop()
+
+#MainPostOffice.py
+import random
+import Tkinter
+
+class MainPostOffice:  # Главпочтамт
+    def __init__(self):
+        self.special_department = []
+
+    def handle_outgoing_mail(self, mail):
+        editor.insert("1.0", f"Обработка отправления {mail} в главпочтамте \n")  # ввод в окно tkinter
+
+        recipient_address = random.choice(["местное", "другой город"])
+        if recipient_address == "местное":
+            recipient_office = random.choice(post_offices)
+            recipient_office.receive_mail(mail)
+        else:
+            self.special_department.append(mail)
+
+        return len(self.special_department)
+
+    def send_special_mail_back(self):  # возврат отправителю его отправления с неправильным адресом
+        for mail in self.special_department:
+            editor.insert("1.0", f"Возврат отправления {mail} отправителю \n")  # ввод в окно tkinter
